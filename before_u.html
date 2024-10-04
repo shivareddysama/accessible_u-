@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 	<meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
@@ -18,6 +18,69 @@
 	<script src="scripts/before-form.js"></script>
 	<script src="scripts/before-modal.js"></script>
 	<script src="scripts/before-hero.js"></script>
+
+	<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    var modal = document.getElementById('modalContent');
+    var openButton = document.getElementById('openModalButton'); // Assuming there's a button to open the modal
+    var closeButton = document.getElementById('modalXButton');
+    var focusableModalElements = modal.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+    var firstFocusableElement = focusableModalElements[0];
+    var lastFocusableElement = focusableModalElements[focusableModalElements.length - 1];
+
+    // Function to open the modal and move focus to it
+    function openModal() {
+      modal.style.display = 'block';
+      modal.focus(); // Set focus to modal when opened
+
+      // Trap focus inside the modal
+      document.addEventListener('keydown', trapFocus);
+    }
+
+    // Function to close the modal and return focus to the trigger
+    function closeModal() {
+      modal.style.display = 'none';
+      openButton.focus(); // Return focus to the element that opened the modal
+      document.removeEventListener('keydown', trapFocus); // Stop trapping focus when modal is closed
+    }
+
+    // Trap focus inside the modal
+    function trapFocus(e) {
+      var isTabPressed = (e.key === 'Tab' || e.keyCode === 9);
+
+      if (!isTabPressed) return;
+
+      if (e.shiftKey) {
+        // Shift + Tab: If focus is on the first element, move to the last element
+        if (document.activeElement === firstFocusableElement) {
+          lastFocusableElement.focus();
+          e.preventDefault();
+        }
+      } else {
+        // Tab: If focus is on the last element, move to the first element
+        if (document.activeElement === lastFocusableElement) {
+          firstFocusableElement.focus();
+          e.preventDefault();
+        }
+      }
+    }
+
+    // Event listeners for opening and closing the modal
+    openButton.addEventListener('click', openModal);
+    closeButton.addEventListener('click', closeModal);
+
+    // Allow closing the modal using the ESC key
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape' || e.keyCode === 27) {
+        closeModal();
+      }
+    });
+  });
+</script>
+
+
+	<button id="openModalButton" type="button">Open Modal</button>
+
 </head>
 <body>
   <div id="content">
@@ -30,11 +93,11 @@
         </ul>
       </nav>
       <a href="/">
-        <img id="logo" src="images/8675309-l-o-g-o-before.png" class="d-block"/>
+        <img id="logo" src="images/8675309-l-o-g-o-before.png" class="d-block" alt="Accessible University logo">
       </a>
     </div>
 
-    <div class="navbar navbar-expand-lg navbar-dark bg-dark bg-primary md-3">
+    <div class="navbar navbar-expand-lg navbar-dark" style="background-color: #003366;">
       <div class="container">
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent">
           <span class="navbar-toggler-icon"></span>
@@ -105,17 +168,17 @@
                 <div>
                   <div class="slide">
                     <a href="somepage.html?ref=Slide%201">
-                      <img src="images/8675309-before_brass_band.jpg" />
+                      <img src="images/8675309-before_brass_band.jpg" alt="Brass band performing outdoors" />
                     </a>
                   </div>
                   <div class="slide">
                     <a href="somepage.html?ref=Slide%202">
-                      <img src="images/8675309-before_articulated_bus.jpg" />
+                      <img src="images/8675309-before_articulated_bus.jpg" alt="articulated"/>
                     </a>
                   </div>
                   <div class="slide">
                     <a href="somepage.html?ref=Slide%203">
-                      <img src="images/8675309-before_construction.jpg" />
+                      <img src="images/8675309-before_construction.jpg" alt="Construction Site"/>
                     </a>
                   </div>
                 </div>
@@ -248,8 +311,8 @@
                   <div id="error"></div>
 
                   <div class="required form-group">
-                    Name:
-                    <input type="text" name="name" class="form-control" />
+                    <label for="name">Name:</label>
+                     <input type="text" id="name" name="name" class="form-control" />
                   </div>
                   <div class="required form-group">
                     Email:
@@ -317,7 +380,8 @@
   </div><!--end #content-->
 
   <!--containers for displaying modal content-->
-  <div id="modalMask"></div>
+  <div id="modalContent" role="dialog" aria-modal="true" tabindex="-1">
+
 
   <div id="modalContent">
     <div class="modalHeading">List of accessibility issues</div>
